@@ -44,8 +44,6 @@ export class ProfilePage {
     this.clienteService.getImageFromBucket(this.cliente.id)
       .subscribe(response => {
         this.cliente.imageUrl = `${API_CONFIG.bucketBaseUrl}/cp${this.cliente.id}.jpg`;
-        //console.log(">>> imagem : " + this.cliente.imageUrl);
-        //console.log(">>> local correto: " + "https://s3-sa-east-1.amazonaws.com/tilapia-spring-ionic/cp2.jpg");
       },
         error => {});
   }
