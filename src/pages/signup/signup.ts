@@ -1,3 +1,5 @@
+import { AlertController } from 'ionic-angular/components/alert/alert-controller';
+import { ClienteService } from './../../services/domain/cliente.service';
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, MenuController } from 'ionic-angular';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
@@ -23,7 +25,9 @@ export class SignupPage {
     public menu: MenuController,
     public formBuilder: FormBuilder,
     public cidadeService : CidadeService,
-    public estadoService : EstadoService) {
+    public estadoService : EstadoService,
+    public clienteService : ClienteService,
+    public alertCtrl : AlertController) {
 
       this.formGroup = this.formBuilder.group({
         nome : ['Joaquim', [Validators.required, Validators.minLength(5), Validators.maxLength(120)]],
@@ -65,7 +69,28 @@ export class SignupPage {
     }
 
   signupUser() {
-    console.log('enviou o form');
+    this.clienteService.insert(this.formGroup.value)
+      .subscribe(response => {
+        this.showInsertOK();
+      },
+      error => {});
+  }
+
+  showInsertOK() {
+    let alert = this.alertCtrl.create({
+      title: 'Sucesso!',
+      message: 'Cadastro efetuado com sucesso',
+      enableBackdropDismiss: false,
+      buttons :[
+        {
+          text: 'OK',
+          handler: () =>{
+            this.navCtrl.pop();
+          }
+        }
+      ]
+    });
+    alert.present();
   }
 
   ionViewWillEnter() {
@@ -74,5 +99,5 @@ export class SignupPage {
 
   ionViewWillLeave() {
     this.menu.swipeEnable(true);
-  } 
+  }
 }
