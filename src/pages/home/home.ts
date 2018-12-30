@@ -12,9 +12,9 @@ import { AuthService } from '../../services/auth.service';
 })
 export class HomePage {
 
-  creds : CredenciaisDTO = {
-    email : "",
-    senha : ""
+  creds: CredenciaisDTO = {
+    email: "",
+    senha: ""
   };
 
   constructor(
@@ -32,12 +32,21 @@ export class HomePage {
     this.menu.swipeEnable(true);
   }
 
+  ionViewDidEnter() {
+    this.auth.refreshToken()
+      .subscribe(response => {
+        this.auth.successfulLogin(response.headers.get('Authorization'));
+        this.navCtrl.setRoot('CategoriasPage');
+      },
+        error => { });
+  }
+
   login() {
     this.auth.authenticate(this.creds)
-        .subscribe(response => {
-          this.auth.successfulLogin(response.headers.get('Authorization'));
-          this.navCtrl.setRoot('CategoriasPage');
-        },
-        error => {});
+      .subscribe(response => {
+        this.auth.successfulLogin(response.headers.get('Authorization'));
+        this.navCtrl.setRoot('CategoriasPage');
+      },
+        error => { });
   }
 }
