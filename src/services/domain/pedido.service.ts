@@ -9,8 +9,7 @@ export class PedidoService {
     constructor(public http: HttpClient){
     }
 
-    insert(obj: PedidoDTO) {
-        console.log("Objeto: " + obj);
+    insert(obj: PedidoDTO) {        
         return this.http.post(
             `${API_CONFIG.baseUrl}/pedidos`,
             obj,

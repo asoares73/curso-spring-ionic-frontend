@@ -1,12 +1,12 @@
-import { PedidoService } from './../../services/domain/pedido.service';
-import { ClienteService } from './../../services/domain/cliente.service';
-import { CartService } from './../../services/domain/cart.service';
-import { CartItem } from './../../models/cart-item';
-import { PedidoDTO } from './../../models/pedido.dto';
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { ClienteDTO } from '../../models/cliente.dto';
+import { PedidoDTO } from '../../models/pedido.dto';
+import { CartItem } from '../../models/cart-item';
 import { EnderecoDTO } from '../../models/endereco.dto';
+import { ClienteDTO } from '../../models/cliente.dto';
+import { ClienteService } from '../../services/domain/cliente.service';
+import { CartService } from '../../services/domain/cart.service';
+import { PedidoService } from '../../services/domain/pedido.service';
 
 @IonicPage()
 @Component({
@@ -15,17 +15,18 @@ import { EnderecoDTO } from '../../models/endereco.dto';
 })
 export class OrderConfirmationPage {
 
-  pedido : PedidoDTO;
+  pedido: PedidoDTO;
   cartItems: CartItem[];
-  cliente : ClienteDTO;
+  cliente: ClienteDTO;
   endereco: EnderecoDTO;
+  codpedido: string;
 
   constructor(
-    public navCtrl: NavController, 
+    public navCtrl: NavController,
     public navParams: NavParams,
-    public cartService : CartService,
-    public clienteService : ClienteService,
-    public pedidoService : PedidoService) {
+    public clienteService: ClienteService,
+    public cartService: CartService,
+    public pedidoService: PedidoService) {
 
     this.pedido = this.navParams.get('pedido');
   }
@@ -38,17 +39,17 @@ export class OrderConfirmationPage {
         this.cliente = response as ClienteDTO;
         this.endereco = this.findEndereco(this.pedido.enderecoDeEntrega.id, response['enderecos']);
       },
-      error => {
-        this.navCtrl.setRoot('HomePage');
-      });
+        error => {
+          this.navCtrl.setRoot('HomePage');
+        });
   }
 
-  private findEndereco(id:string, list: EnderecoDTO[]) : EnderecoDTO {
+  private findEndereco(id: string, list: EnderecoDTO[]): EnderecoDTO {
     let position = list.findIndex(x => x.id == id);
     return list[position];
   }
 
-  total() {
+  total(): number {
     return this.cartService.total();
   }
 
@@ -56,17 +57,25 @@ export class OrderConfirmationPage {
     this.navCtrl.setRoot('CartPage');
   }
 
+  home() {
+    this.navCtrl.setRoot('CategoriasPage');
+  }
+
   checkout() {
-    console.log(this.pedido);
     this.pedidoService.insert(this.pedido)
       .subscribe(response => {
         this.cartService.createOrClearCart();
-        console.log(response.headers.get('location'));
+        this.codpedido = this.extractId(response.headers.get('location'));
       },
-      error => {
-        if (error.status == 403) {
-          this.navCtrl.setRoot('HomePage');
-        }
-      });
+        error => {
+          if (error.status == 403) {
+            this.navCtrl.setRoot('HomePage');
+          }
+        });
+  }
+
+  private extractId(location: string): string {
+    let position = location.lastIndexOf('/');
+    return location.substring(position + 1, location.length);
   }
 }
