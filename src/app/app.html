@@ -9,11 +9,12 @@
     <ion-item id="cabecalho-menu" class="cabecalho-menu">
       <div>
         <ion-avatar item-start>
-          <img src="assets/imgs/avatar-profile.jpg">
+          
+          <img class="circle" [src]="cliente?.imageUrl || 'assets/imgs/avatar-blank.png'">
         </ion-avatar>
       </div>
-      <h2>Alexandre Soares de Almeida</h2>
-      <p>asoares73@gmail.com</p>
+      <h2>{{cliente?.nome}}</h2>
+      <p>{{cliente?.email}}</p>
     </ion-item>
 
     <ion-list>
