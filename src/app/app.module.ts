@@ -1,3 +1,4 @@
+import { ImageUtilService } from './../services/image-util.service';
 import { ClienteService } from './../services/domain/cliente.service';
 import { AuthService } from './../services/auth.service';
 import { BrowserModule } from '@angular/platform-browser';
@@ -40,7 +41,8 @@ import { CartService } from '../services/domain/cart.service';
     StorageService,
     ClienteService,
     ProdutoService,
-    CartService
+    CartService,
+    ImageUtilService,
   ]
 })
 export class AppModule {}

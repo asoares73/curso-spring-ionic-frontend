@@ -2,7 +2,7 @@ import { ProdutoDTO } from './../../models/produto.dto';
 import { CartService } from './../../services/domain/cart.service';
 import { ProdutoService } from './../../services/domain/produto.service';
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, LoadingController } from 'ionic-angular';
 import { CartItem } from '../../models/cart-item';
 import { API_CONFIG } from '../../config/api.config';
 
@@ -19,7 +19,8 @@ export class CartPage {
     public navCtrl: NavController,
     public navParams: NavParams,
     public cartService: CartService,
-    public produtoService: ProdutoService) {
+    public produtoService: ProdutoService,
+    public loadingCtrl: LoadingController) {
   }
 
   ionViewDidLoad() {
@@ -29,6 +30,8 @@ export class CartPage {
   }
 
   loadImageUrls() {
+    let loader = this.presentLoading();
+
     for (var i=0; i<this.items.length; i++) {
       let item = this.items[i];
       this.produtoService.getSmallImageFromBucket(item.produto.id)
@@ -37,6 +40,7 @@ export class CartPage {
         },
         error => {});
     }
+    loader.dismiss();
   }
 
   removeItem(produto: ProdutoDTO) {
@@ -62,4 +66,12 @@ export class CartPage {
   checkout() {
     this.navCtrl.push('PickAddressPage');
   }
+
+  presentLoading() {
+    const loader = this.loadingCtrl.create({
+      content: "Aguarde...",
+    });
+    loader.present();
+    return loader;
+  }  
 }

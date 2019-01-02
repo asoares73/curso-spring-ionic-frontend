@@ -45,6 +45,7 @@ export class MyApp {
     events.subscribe('user:loggedin', () => {
       this.pages = [
         { title: 'Perfil', component: 'ProfilePage', icon: 'contact' },
+        { title: 'DashBoard', component: 'ProfilePage', icon: 'pie' },
         { title: 'Categorias', component: 'CategoriasPage', icon: 'folder' },
         { title: 'Carrinho', component: 'CartPage', icon: 'cart' },
         { title: 'Ajuda', component: 'ProfilePage', icon: 'help-circle' },
@@ -71,6 +72,7 @@ export class MyApp {
       // Here you can do any higher level native things you might need.
       this.statusBar.styleDefault();
       this.splashScreen.hide();
+      this.carrega();
     });
   }
 
