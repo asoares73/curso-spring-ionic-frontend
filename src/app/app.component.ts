@@ -8,26 +8,29 @@ import { ClienteService } from '../services/domain/cliente.service';
 import { ClienteDTO } from '../models/cliente.dto';
 import { API_CONFIG } from '../config/api.config';
 
+import { Events } from 'ionic-angular';
+
 @Component({
-  selector : 'myapp',
+  selector: 'myapp',
   templateUrl: 'app.html'
 })
 export class MyApp {
-  cliente : ClienteDTO;
+  cliente: ClienteDTO;
 
   @ViewChild(Nav) nav: Nav;
 
   rootPage: string = 'HomePage';
 
-  pages: Array<{title: string, component: string, icon: string}>;
+  pages: Array<{ title: string, component: string, icon: string }>;
 
   constructor(
-    public platform: Platform, 
-    public statusBar: StatusBar, 
+    public platform: Platform,
+    public statusBar: StatusBar,
     public splashScreen: SplashScreen,
     public auth: AuthService,
     public storage: StorageService,
-    public clienteService: ClienteService) {
+    public clienteService: ClienteService,
+    public events: Events) {
     this.initializeApp();
 
     // used for an example of ngFor and navigation
@@ -37,6 +40,28 @@ export class MyApp {
       { title: 'Carrinho', component: 'CartPage', icon: 'cart' },
       { title: 'Logout', component: 'CategoriasPage', icon: 'exit' },
     ];
+    
+
+    events.subscribe('user:loggedin', () => {
+      this.pages = [
+        { title: 'Perfil', component: 'ProfilePage', icon: 'contact' },
+        { title: 'Categorias', component: 'CategoriasPage', icon: 'folder' },
+        { title: 'Carrinho', component: 'CartPage', icon: 'cart' },
+        { title: 'Ajuda', component: 'ProfilePage', icon: 'help-circle' },
+        { title: 'Logout', component: 'CategoriasPage', icon: 'exit' },
+      ];
+      this.carrega();
+    });
+
+    events.subscribe('user:loggeout', () => {
+      this.pages = [
+        { title: 'Ajuda', component: 'ProfilePage', icon: 'help-circle' },
+
+      ];
+      this.carrega();
+    });
+
+    console.log("Entrei no construtor do app.component.ts");
 
   }
 
@@ -46,20 +71,20 @@ export class MyApp {
       // Here you can do any higher level native things you might need.
       this.statusBar.styleDefault();
       this.splashScreen.hide();
-
-      this.carrega();
     });
   }
 
-  openPage(page : {title:string, component:string}) {
+  openPage(page: { title: string, component: string }) {
     switch (page.title) {
       case 'Logout':
-      this.auth.logout();
-      this.nav.setRoot('HomePage');
-      break;
+        this.auth.logout();
+        this.nav.setRoot('HomePage');
+        this.events.publish('user:loggedout');
+        break;
 
-      default: 
-      this.nav.setRoot(page.component);
+      default:
+        this.nav.setRoot(page.component);
+        break;
     }
   }
 
@@ -71,9 +96,8 @@ export class MyApp {
           this.cliente = response as ClienteDTO;
           this.getImageIfExists();
         },
-        error => {});
+          error => { });
     }
-
   }
 
   getImageIfExists() {
@@ -81,6 +105,6 @@ export class MyApp {
       .subscribe(response => {
         this.cliente.imageUrl = `${API_CONFIG.bucketBaseUrl}/cp${this.cliente.id}.jpg`;
       },
-        error => {});
+        error => { });
   }
 }

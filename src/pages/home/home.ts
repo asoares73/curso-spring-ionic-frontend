@@ -1,9 +1,12 @@
+import { ClienteService } from './../../services/domain/cliente.service';
+import { ClienteDTO } from './../../models/cliente.dto';
+
 import { Component } from '@angular/core';
-import { NavController, MenuController } from 'ionic-angular';
+import { NavController, MenuController, Events } from 'ionic-angular';
 import { IonicPage } from 'ionic-angular/navigation/ionic-page';
 import { CredenciaisDTO } from '../../models/credenciais.dto';
 import { AuthService } from '../../services/auth.service';
-
+import { StorageService } from '../../services/storage.service';
 
 @IonicPage()
 @Component({
@@ -11,6 +14,7 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: 'home.html'
 })
 export class HomePage {
+  cliente : ClienteDTO;
 
   creds: CredenciaisDTO = {
     email: "",
@@ -20,7 +24,10 @@ export class HomePage {
   constructor(
     public navCtrl: NavController,
     public menu: MenuController,
-    public auth: AuthService) {
+    public auth: AuthService,
+    public storage: StorageService,
+    public clienteService: ClienteService,
+    public events : Events) {
 
   }
 
@@ -45,6 +52,7 @@ export class HomePage {
     this.auth.authenticate(this.creds)
       .subscribe(response => {
         this.auth.successfulLogin(response.headers.get('Authorization'));
+        this.events.publish('user:loggedin');
         this.navCtrl.setRoot('CategoriasPage');
       },
         error => { });

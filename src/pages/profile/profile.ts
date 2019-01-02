@@ -40,7 +40,7 @@ export class ProfilePage {
     }
   }
 
-  getImageIfExists() {
+  public getImageIfExists() {
     this.clienteService.getImageFromBucket(this.cliente.id)
       .subscribe(response => {
         this.cliente.imageUrl = `${API_CONFIG.bucketBaseUrl}/cp${this.cliente.id}.jpg`;
